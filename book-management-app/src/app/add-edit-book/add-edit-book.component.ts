@@ -11,23 +11,23 @@ import { FormsModule } from '@angular/forms';
   styleUrls: ['./add-edit-book.component.css']
 })
 export class AddEditBookComponent {
-  book = { id: null as number | null, title: '', author: '' }; // Allow id to be number or null
+  book = { id: null as number | null, title: '', author: '' };
   isEditMode = false;
 
   constructor(private router: Router, private route: ActivatedRoute) {
     const bookId = this.route.snapshot.paramMap.get('id');
     if (bookId) {
       this.isEditMode = true;
-      // Now this assignment is valid because `id` can be a number
+      // Fetch the book details from a service or state management
       this.book = { id: parseInt(bookId, 10), title: 'Sample Book', author: 'Sample Author' };
     }
   }
 
   onSubmit() {
     if (this.isEditMode) {
-      // Update the book
+      // Update the book logic here
     } else {
-      // Add new book
+      // Add new book logic here
     }
     this.router.navigate(['/']);
   }

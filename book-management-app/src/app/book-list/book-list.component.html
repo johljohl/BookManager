@@ -1,7 +1,7 @@
-<div>
-    <h2>Book List</h2>
-    <table>
-      <thead>
+<div class="container">
+    <h2 class="my-4">Book List</h2>
+    <table class="table table-striped">
+      <thead class="thead-dark">
         <tr>
           <th>Title</th>
           <th>Author</th>
@@ -13,12 +13,16 @@
           <td>{{ book.title }}</td>
           <td>{{ book.author }}</td>
           <td>
-            <button (click)="editBook(book)">Edit</button>
-            <button (click)="deleteBook(book.id)">Delete</button>
+            <button class="btn btn-primary btn-sm" (click)="editBook(book)">
+              <i class="fa fa-edit"></i> Edit
+            </button>
+            <button class="btn btn-danger btn-sm" (click)="deleteBook(book.id)">
+              <i class="fa fa-trash"></i> Delete
+            </button>
           </td>
         </tr>
       </tbody>
     </table>
-    <button (click)="addBook()">Add New Book</button>
+    <button class="btn btn-success mt-3" (click)="addBook()">Add New Book</button>
   </div>
   
