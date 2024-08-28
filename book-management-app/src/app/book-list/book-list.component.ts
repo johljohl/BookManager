@@ -1,31 +1,44 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { HttpClientModule } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
+import { BookService } from '../services/book.service';
 
 @Component({
   selector: 'app-book-list',
   standalone: true,
-  imports: [CommonModule],
+  imports: [HttpClientModule, CommonModule],
   templateUrl: './book-list.component.html',
   styleUrls: ['./book-list.component.css']
 })
-export class BookListComponent {
-  books = [
-    { id: 1, title: 'Angular Basics', author: 'John Doe' },
-    { id: 2, title: 'Advanced Angular', author: 'Jane Smith' }
-  ];
+export class BookListComponent implements OnInit {
+  books: any[] = [];
 
-  constructor(private router: Router) {}
+  constructor(private bookService: BookService, private router: Router) {}
 
-  addBook() {
+  ngOnInit(): void {
+    this.fetchBooks();
+  }
+
+  fetchBooks(): void {
+    this.bookService.getBooks().subscribe({
+      next: (data) => (this.books = data),
+      error: (err) => console.error('Failed to fetch books', err)
+    });
+  }
+
+  addBook(): void {
     this.router.navigate(['/add-edit-book']);
   }
 
-  editBook(book: any) {
+  editBook(book: any): void {
     this.router.navigate(['/add-edit-book', book.id]);
   }
 
-  deleteBook(bookId: number) {
-    this.books = this.books.filter(book => book.id !== bookId);
+  deleteBook(id: number): void {
+    this.bookService.deleteBook(id).subscribe({
+      next: () => this.fetchBooks(),
+      error: (err) => console.error('Failed to delete book', err)
+    });
   }
 }
