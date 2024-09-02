@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using BookApi.Data;
@@ -5,9 +6,11 @@ using BookApi.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Linq;
+using System;
 
 namespace BookApi.Controllers
 {
+    [Authorize]  // Ensures all actions require authentication
     [Route("api/[controller]")]
     [ApiController]
     public class BooksController : ControllerBase

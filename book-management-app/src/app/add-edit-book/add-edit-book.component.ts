@@ -13,8 +13,6 @@ import { BookService } from '../services/book.service';
 })
 export class AddEditBookComponent implements OnInit {
   book = { id: 0, title: '', author: '', publicationDate: '' };  // Initialize with default values
-
-
   isEditMode = false;
 
   constructor(
@@ -36,7 +34,7 @@ export class AddEditBookComponent implements OnInit {
 
   onSubmit() {
     console.log('Book data before POST:', this.book);  // Log to inspect object
-    
+
     if (this.isEditMode) {
       this.bookService.updateBook(this.book.id!, this.book).subscribe({
         next: () => this.router.navigate(['/']),
@@ -59,7 +57,6 @@ export class AddEditBookComponent implements OnInit {
       });
     }
   }
-  
 
   cancel() {
     this.router.navigate(['/']);

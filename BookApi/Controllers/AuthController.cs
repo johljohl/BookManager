@@ -17,19 +17,21 @@ namespace BookApi.Controllers
             _config = config ?? throw new ArgumentNullException(nameof(config));  // Ensure _config is not null
         }
 
-        [HttpPost("login")]
-        public IActionResult Login([FromBody] UserLogin userLogin)
-        {
-            var user = Authenticate(userLogin);
+    [HttpPost("login")]
+public IActionResult Login([FromBody] UserLogin userLogin)
+{
+    var user = Authenticate(userLogin);
 
-            if (user != null)
-            {
-                var token = GenerateToken(user);
-                return Ok(new { token });
-            }
+    if (user != null)
+    {
+        var token = GenerateToken(user);
+        return Ok(new { token });
+    }
 
-            return NotFound("User not found");
-        }
+    // Return a more descriptive error message
+    return Unauthorized(new { message = "Invalid username or password" });
+}
+
 
         private UserModel? Authenticate(UserLogin userLogin)  // Return type made nullable
         {

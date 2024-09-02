@@ -7,14 +7,14 @@ import { AuthService } from '../services/auth.service'; // Import AuthService
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule], // Ensure imports are correctly referenced
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent {
   user = { username: '', password: '' }; // User object for form binding
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(public authService: AuthService, private router: Router) {} // authService should be public to access in template
 
   onSubmit() {
     // Use AuthService to authenticate the user
@@ -23,7 +23,13 @@ export class LoginComponent {
         this.authService.setToken(response.token); // Store JWT token
         this.router.navigate(['/']); // Navigate to the home page
       },
-      error: () => alert('Invalid credentials') // Show error message on failed login
+      error: (err) => {
+        alert(err.message); // Show specific error messages to the user
+      }
     });
+  }
+
+  logout() {
+    this.authService.logout(); // Call logout method from AuthService
   }
 }
