@@ -14,39 +14,75 @@ namespace BookApi.Controllers
 
         public AuthController(IConfiguration config)
         {
-            _config = config ?? throw new ArgumentNullException(nameof(config));  // Ensure _config is not null
+            _config = config ?? throw new ArgumentNullException(nameof(config));
         }
 
-    [HttpPost("login")]
-public IActionResult Login([FromBody] UserLogin userLogin)
-{
-    var user = Authenticate(userLogin);
-
-    if (user != null)
-    {
-        var token = GenerateToken(user);
-        return Ok(new { token });
-    }
-
-    // Return a more descriptive error message
-    return Unauthorized(new { message = "Invalid username or password" });
-}
-
-
-        private UserModel? Authenticate(UserLogin userLogin)  // Return type made nullable
+        [HttpPost("login")]
+        public IActionResult Login([FromBody] UserLogin userLogin)
         {
-            if (userLogin.Username == "test" && userLogin.Password == "password")
+            var user = Authenticate(userLogin);
+
+            if (user != null)
             {
-                return new UserModel 
-                { 
-                    Username = "test", 
-                    EmailAddress = "test@domain.com", 
-                    GivenName = "Test", 
-                    Surname = "User" 
-                };
+                var token = GenerateToken(user);
+                return Ok(new { token });
             }
 
-            return null;
+            return Unauthorized(new { message = "Invalid username or password" });
+        }
+
+        [HttpPost("refresh")]
+        public IActionResult RefreshToken()
+        {
+            var currentToken = Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+
+            // Validate the current token and generate a new one if valid
+            if (IsValidToken(currentToken, out UserModel user))
+            {
+                var newToken = GenerateToken(user);
+                return Ok(new { token = newToken });
+            }
+            return Unauthorized(new { message = "Invalid token" });
+        }
+
+        private bool IsValidToken(string token, out UserModel user)
+        {
+            user = null;
+            try
+            {
+                var tokenHandler = new JwtSecurityTokenHandler();
+                var key = Encoding.UTF8.GetBytes(_config["Jwt:Key"]);
+                var validationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidateLifetime = false, // Do not check for token expiration here
+                    ValidIssuer = _config["Jwt:Issuer"],
+                    ValidAudience = _config["Jwt:Audience"],
+                    IssuerSigningKey = new SymmetricSecurityKey(key)
+                };
+
+                var principal = tokenHandler.ValidateToken(token, validationParameters, out SecurityToken validatedToken);
+
+                // Validate the token expiration manually if needed
+                if (validatedToken is JwtSecurityToken jwtToken && jwtToken.ValidTo > DateTime.UtcNow)
+                {
+                    user = new UserModel
+                    {
+                        Username = principal.FindFirst(ClaimTypes.Name)?.Value,
+                        EmailAddress = principal.FindFirst(ClaimTypes.Email)?.Value,
+                        GivenName = principal.FindFirst(ClaimTypes.GivenName)?.Value,
+                        Surname = principal.FindFirst(ClaimTypes.Surname)?.Value
+                    };
+                    return true;
+                }
+            }
+            catch
+            {
+                // Handle or log the exception
+            }
+            return false;
         }
 
         private string GenerateToken(UserModel user)
@@ -73,19 +109,36 @@ public IActionResult Login([FromBody] UserLogin userLogin)
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
+
+        private UserModel? Authenticate(UserLogin userLogin)
+        {
+            // This is a mock example, replace with your user authentication logic
+            if (userLogin.Username == "test" && userLogin.Password == "password")
+            {
+                return new UserModel
+                {
+                    Username = "test",
+                    EmailAddress = "test@domain.com",
+                    GivenName = "Test",
+                    Surname = "User"
+                };
+            }
+
+            return null;
+        }
     }
 
     public class UserLogin
     {
-        public string Username { get; set; } = string.Empty;  // Initialized with default value
-        public string Password { get; set; } = string.Empty;  // Initialized with default value
+        public string Username { get; set; } = string.Empty;
+        public string Password { get; set; } = string.Empty;
     }
 
     public class UserModel
     {
-        public string Username { get; set; } = string.Empty;      // Initialized with default value
-        public string EmailAddress { get; set; } = string.Empty;  // Initialized with default value
-        public string GivenName { get; set; } = string.Empty;     // Initialized with default value
-        public string Surname { get; set; } = string.Empty;       // Initialized with default value
+        public string Username { get; set; } = string.Empty;
+        public string EmailAddress { get; set; } = string.Empty;
+        public string GivenName { get; set; } = string.Empty;
+        public string Surname { get; set; } = string.Empty;
     }
 }
