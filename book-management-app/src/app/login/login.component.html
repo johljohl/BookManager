@@ -1,5 +1,6 @@
 <div class="container">
-  <h2 class="my-4">Login</h2>
+  <h2 class="my-4" *ngIf="!authService.isAuthenticated()" routerLink="/login">Login</h2>
+    <h2 *ngIf="authService.isAuthenticated()">Logout</h2>
   <form (ngSubmit)="onSubmit()" class="needs-validation" novalidate *ngIf="!authService.isAuthenticated()">
     <div class="mb-3">
       <label for="username" class="form-label">Username:</label>
@@ -31,6 +32,7 @@
   </form>
 
   <!-- Logout button displayed only when the user is authenticated -->
+   <p *ngIf="authService.isAuthenticated()">Do you want to logout?</p>
   <button class="btn btn-secondary" *ngIf="authService.isAuthenticated()" (click)="logout()">
     <i class="fa fa-sign-out"></i> Logout
   </button>
