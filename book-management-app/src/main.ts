@@ -4,6 +4,7 @@ import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { AppComponent } from './app/app.component';
 import { BookListComponent } from './app/book-list/book-list.component';
 import { AddEditBookComponent } from './app/add-edit-book/add-edit-book.component';
+import { MyQuotesComponent } from './app/my-quotes/my-quotes.component';
 import { LoginComponent } from './app/login/login.component';
 import { AuthGuard } from './app/guards/auth.guard';
 import { AuthService } from './app/services/auth.service';
@@ -14,7 +15,9 @@ const routes = [
   { path: '', component: BookListComponent, canActivate: [AuthGuard] },
   { path: 'add-edit-book', component: AddEditBookComponent, canActivate: [AuthGuard] },
   { path: 'add-edit-book/:id', component: AddEditBookComponent, canActivate: [AuthGuard] },
+  { path: 'my-quotes', component: MyQuotesComponent, canActivate: [AuthGuard] },
   { path: 'login', component: LoginComponent }
+
 ];
 
 // Bootstrap applikationen med nödvändiga providers

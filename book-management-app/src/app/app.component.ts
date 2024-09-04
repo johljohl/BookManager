@@ -11,8 +11,9 @@ import { AuthService } from './services/auth.service'; // Import AuthService
     <nav>
       <a routerLink="/">Home</a>
       <a routerLink="/add-edit-book">Add Book</a>
+      <a routerLink="/my-quotes">My Quotes</a>
       <a routerLink="/login">Login</a>
-      
+     
     </nav>
     <router-outlet></router-outlet>
   `,
