@@ -1,7 +1,9 @@
-<div class="container">
-    <h2 class="my-4">Book List</h2>
-    <table class="table table-striped">
-      <thead class="thead-dark">
+<div class="container my-5">
+  <h2 class="my-4">Book List</h2>
+
+  <div class="table-responsive">
+    <table class="table table-hover table-bordered bg-white"> <!-- Vit bakgrund för hela tabellen -->
+      <thead class="table-secondary">
         <tr>
           <th>Title</th>
           <th>Author</th>
@@ -9,20 +11,24 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let book of books">
+        <tr *ngFor="let book of books" [ngClass]="{'table-success': book.highlighted}">
           <td>{{ book.title }}</td>
           <td>{{ book.author }}</td>
-          <td>
-            <button class="btn btn-primary btn-sm" (click)="editBook(book)">
+          <td class="d-flex flex-column flex-md-row justify-content-center align-items-stretch"> <!-- Responsiv layout för knappar -->
+            <button class="btn btn-primary btn-sm me-2 mb-2 mb-md-0 w-100" (click)="editBook(book)">
               <i class="fa fa-edit"></i> Edit
             </button>
-            <button class="btn btn-danger btn-sm" (click)="deleteBook(book.id)">
+            <button class="btn btn-danger btn-sm w-100" (click)="deleteBook(book.id)">
               <i class="fa fa-trash"></i> Delete
             </button>
           </td>
         </tr>
       </tbody>
     </table>
-    <button class="btn btn-success mt-3" (click)="addBook()">Add New Book</button>
+    
+  </div><div class="d-flex justify-content-between align-items-center mb-4">
+    <button class="btn btn-success" (click)="addBook()">
+      <i class="fa fa-plus-circle"></i> Add New Book
+    </button>
   </div>
-  
+</div>

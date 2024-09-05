@@ -1,51 +1,66 @@
-<form (ngSubmit)="onSubmit()" #bookForm="ngForm" novalidate>
-  <div class="form-group">
-    <label for="title">Title</label>
-    <input
-      type="text"
-      id="title"
-      class="form-control"
-      [(ngModel)]="book.title"
-      name="title"
-      required
-      #title="ngModel"
-    />
-    <div *ngIf="title.invalid && title.touched" class="text-danger">
-      Title is required.
+<div class="container my-5">
+  <h2 class="my-4">Add Book</h2>
+  <form (ngSubmit)="onSubmit()" #bookForm="ngForm" novalidate class="p-4 shadow-sm rounded bg-white table-bordered">
+    <div class="form-group mb-3">
+      <label for="title" class="form-label text-dark">Title</label>
+      <input
+        type="text"
+        id="title"
+        class="form-control"
+        [(ngModel)]="book.title"
+        name="title"
+        required
+        #title="ngModel"
+        [ngClass]="{'is-invalid': title.invalid && title.touched, 'is-valid': title.valid && title.touched}"
+      />
+      <div *ngIf="title.invalid && title.touched" class="invalid-feedback">
+        Title is required.
+      </div>
     </div>
-  </div>
-  <div class="form-group">
-    <label for="author">Author</label>
-    <input
-      type="text"
-      id="author"
-      class="form-control"
-      [(ngModel)]="book.author"
-      name="author"
-      required
-      #author="ngModel"
-    />
-    <div *ngIf="author.invalid && author.touched" class="text-danger">
-      Author is required.
+
+    <div class="form-group mb-3">
+      <label for="author" class="form-label text-dark">Author</label>
+      <input
+        type="text"
+        id="author"
+        class="form-control"
+        [(ngModel)]="book.author"
+        name="author"
+        required
+        #author="ngModel"
+        [ngClass]="{'is-invalid': author.invalid && author.touched, 'is-valid': author.valid && author.touched}"
+      />
+      <div *ngIf="author.invalid && author.touched" class="invalid-feedback">
+        Author is required.
+      </div>
     </div>
-  </div>
-  <div class="form-group">
-    <label for="publicationDate">Publication Date</label>
-    <input
-      type="date"
-      id="publicationDate"
-      class="form-control"
-      [(ngModel)]="book.publicationDate"
-      name="publicationDate"
-      required
-      #publicationDate="ngModel"
-    />
-    <div *ngIf="publicationDate.invalid && publicationDate.touched" class="text-danger">
-      Publication date is required.
+
+    <div class="form-group mb-4">
+      <label for="publicationDate" class="form-label text-dark">Publication Date</label>
+      <input
+        type="date"
+        id="publicationDate"
+        class="form-control"
+        [(ngModel)]="book.publicationDate"
+        name="publicationDate"
+        required
+        #publicationDate="ngModel"
+        [ngClass]="{'is-invalid': publicationDate.invalid && publicationDate.touched, 'is-valid': publicationDate.valid && publicationDate.touched}"
+      />
+      <div *ngIf="publicationDate.invalid && publicationDate.touched" class="invalid-feedback">
+        Publication date is required.
+      </div>
     </div>
-  </div>
-  <button type="submit" class="btn btn-primary" [disabled]="bookForm.invalid">
-    {{ isEditMode ? 'Update' : 'Add' }}
-  </button>
-  <button type="button" class="btn btn-secondary" (click)="cancel()">Cancel</button>
-</form>
+
+    <div class="d-flex justify-content-between">
+      <button type="submit" class="btn btn-primary px-4" [disabled]="bookForm.invalid">
+        <i class="fa fa-plus-circle"></i>
+        {{ isEditMode ? 'Update' : 'Add' }}
+      </button>
+      <button type="button" class="btn btn-secondary px-4" (click)="cancel()">
+        <i class="fa fa-times"></i> <!-- Font Awesome ikon för 'Cancel' -->
+        Cancel
+      </button>
+    </div>
+  </form>
+</div>

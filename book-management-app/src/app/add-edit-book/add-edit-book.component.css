@@ -1,0 +1,53 @@
+/* Ljus tema formulär */
+.light-theme-form {
+  background-color: #f9f9f9;
+  color: #000;
+}
+
+/* Mörk tema formulär */
+.dark-theme-form {
+  background-color: #333;
+  color: #fff;
+}
+
+/* Text färgklasser för att säkerställa kontrast i båda teman */
+.text-dark {
+  color: #000 !important; /* Viktig för att åsidosätta andra stilar */
+}
+
+.text-light {
+  color: #fff !important; /* Viktig för att åsidosätta andra stilar */
+}
+
+.form-control:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+.table-bordered {
+  border: 1px solid #dee2e6;
+}
+
+.btn-primary {
+  background-color: #007bff;
+  border-color: #007bff;
+  color: #fff;
+}
+
+.btn-secondary {
+  background-color: #6c757d;
+  border-color: #6c757d;
+  color: #fff;
+}
+
+.invalid-feedback {
+  font-size: 0.9rem;
+}
+
+.is-invalid {
+  border-color: #dc3545;
+}
+
+.is-valid {
+  border-color: #28a745;
+}

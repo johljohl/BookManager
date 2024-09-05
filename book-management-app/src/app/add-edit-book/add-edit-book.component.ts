@@ -12,14 +12,18 @@ import { BookService } from '../services/book.service';
   styleUrls: ['./add-edit-book.component.css']
 })
 export class AddEditBookComponent implements OnInit {
-  book = { id: 0, title: '', author: '', publicationDate: '' };  // Initialize with default values
+  book = { id: 0, title: '', author: '', publicationDate: '' };
   isEditMode = false;
+  isDarkTheme = false;  // Lägg till denna rad för att hantera temastatus
 
   constructor(
     private bookService: BookService,
     private router: Router,
     private route: ActivatedRoute
-  ) {}
+  ) {
+    // Initiera temastatus baserat på lokalt lagrat värde
+    this.isDarkTheme = localStorage.getItem('theme') === 'dark';
+  }
 
   ngOnInit(): void {
     const bookId = this.route.snapshot.paramMap.get('id');
@@ -33,8 +37,6 @@ export class AddEditBookComponent implements OnInit {
   }
 
   onSubmit() {
-    console.log('Book data before POST:', this.book);  // Log to inspect object
-
     if (this.isEditMode) {
       this.bookService.updateBook(this.book.id!, this.book).subscribe({
         next: () => this.router.navigate(['/']),
@@ -45,13 +47,9 @@ export class AddEditBookComponent implements OnInit {
       });
     } else {
       this.bookService.addBook(this.book).subscribe({
-        next: () => {
-          console.log('Book added successfully');
-          this.router.navigate(['/']);
-        },
+        next: () => this.router.navigate(['/']),
         error: (err) => {
           console.error('Failed to add book', err);
-          console.error('Validation error from backend:', err.error);  // Log the validation error
           alert('Failed to add book. Validation error occurred. Check input and try again.');
         }
       });

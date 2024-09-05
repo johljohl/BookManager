@@ -1,0 +1,33 @@
+.table-responsive {
+    max-height: 400px; /* Begränsa höjden och gör tabellen scrollbar */
+    overflow-y: auto; /* Lägg till vertikal rullning om det behövs */
+  }
+  
+  .table-hover tbody tr:hover {
+    background-color: #f1f1f1; /* Ändra radfärg vid hover för bättre interaktivitet */
+  }
+  
+  .btn-primary, .btn-danger {
+    display: flex;
+    align-items: center;
+    gap: 5px; /* Mellanrum mellan ikon och text */
+  }
+  
+  .table-bordered th, .table-bordered td {
+    text-align: center; /* Centrera texten i bordsceller */
+    vertical-align: middle; /* Vertikal centrering av text i bordsceller */
+  }
+  
+  .d-flex .btn {
+    flex-grow: 1; /* Gör att knapparna i actions-kolumnen tar upp lika mycket utrymme */
+  }
+  
+  .table-success {
+    animation: highlight 1.5s ease-in-out; /* Animeringseffekt för att framhäva nyligen tillagda/uppdaterade rader */
+  }
+  
+  @keyframes highlight {
+    0% { background-color: #d4edda; }
+    100% { background-color: transparent; }
+  }
+  
