@@ -59,6 +59,10 @@ builder.Services.AddCors(options =>
                           .AllowAnyHeader());
 });
 
+var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
+builder.WebHost.UseUrls($"http://*:{port}");
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -68,7 +72,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 app.UseCors("AllowAllOrigins");
 
 app.UseAuthentication();
