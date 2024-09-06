@@ -49,31 +49,40 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
-
-// Configure CORS to allow any origin (adjust as needed for security)
+// Configure CORS to allow your frontend domain only
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAllOrigins",
-        builder => builder.AllowAnyOrigin()
-                          .AllowAnyMethod()
-                          .AllowAnyHeader());
+    options.AddPolicy("AllowSpecificOrigin", builder =>
+    {
+        // Replace with your actual frontend URL from Render
+        builder.WithOrigins("https://bookmanager-1.onrender.com")
+               .AllowAnyMethod()
+               .AllowAnyHeader();
+    });
 });
 
+// Set Render's dynamic port, use port 8080 as default if not provided
 var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
 builder.WebHost.UseUrls($"http://*:{port}");
 
-
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+// Enable Swagger for development and production environments
+if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+        c.RoutePrefix = string.Empty; // Serve Swagger at the app's root
+    });
 }
 
-//app.UseHttpsRedirection();
-app.UseCors("AllowAllOrigins");
+// Do not use HTTPS redirection because Render handles HTTPS itself
+// app.UseHttpsRedirection();
+
+// Use CORS policy to allow only your frontend domain
+app.UseCors("AllowSpecificOrigin");
 
 app.UseAuthentication();
 app.UseAuthorization();
@@ -81,3 +90,4 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+cd 
