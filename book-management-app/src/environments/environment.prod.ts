@@ -1,5 +1,5 @@
 export const environment = {
     production: true,
-    apiUrl: 'https://bookmanager-lh64.onrender.com/api' // Din backend-URL på Render
+    apiUrl: 'https://bookmanager-lh64.onrender.com/api'  // Detta ska vara din backend-URL
   };
   
