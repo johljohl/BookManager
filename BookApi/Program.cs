@@ -54,12 +54,13 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowSpecificOrigin", builder =>
     {
-        builder.WithOrigins("https://bookmanager-3.onrender.com", "https://bookmanager-3.onrender.com/browser/")
+        builder.WithOrigins("https://bookmanager-3.onrender.com")  // Ensure the domain is correct
                .AllowAnyMethod()
                .AllowAnyHeader()
-               .AllowCredentials();  // Nödvändig om du skickar autentiseringstoken
+               .AllowCredentials(); // Required for authentication tokens
     });
 });
+
 
 // Set Render's dynamic port, use port 8080 as default if not provided
 var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
@@ -83,7 +84,6 @@ if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
 
 // Use CORS policy to allow only your frontend domain
 app.UseCors("AllowSpecificOrigin");
-
 app.UseAuthentication();
 app.UseAuthorization();
 
