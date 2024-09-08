@@ -55,7 +55,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowSpecificOrigin", builder =>
     {
         // Replace with your actual frontend URL from Render
-        builder.WithOrigins("https://bookmanager-1.onrender.com")
+        builder.WithOrigins("https://bookmanager-3.onrender.com")
                .AllowAnyMethod()
                .AllowAnyHeader();
     });
