@@ -7,29 +7,37 @@ import { AuthService } from '../services/auth.service'; // Import AuthService
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, FormsModule], // Ensure imports are correctly referenced
-  templateUrl: './login.component.html',
-  styleUrls: ['./login.component.css']
+  imports: [CommonModule, FormsModule],  // Ensure necessary modules are imported
+  templateUrl: './login.component.html',  // Template for login form
+  styleUrls: ['./login.component.css']  // Styles for the login component
 })
 export class LoginComponent {
-  user = { username: '', password: '' }; // User object for form binding
+  // Object to bind user input (username and password)
+  user = { username: '', password: '' };
 
-  constructor(public authService: AuthService, private router: Router) {} // authService should be public to access in template
+  // Inject AuthService for authentication and Router for navigation
+  constructor(public authService: AuthService, private router: Router) {}
 
+  // Handles the form submission for login
   onSubmit() {
-    // Use AuthService to authenticate the user
+    // Call the AuthService login method to authenticate the user
     this.authService.login(this.user.username, this.user.password).subscribe({
       next: (response) => {
-        this.authService.setToken(response.token); // Store JWT token
-        this.router.navigate(['/']); // Navigate to the home page
+        // If successful, store the JWT token
+        this.authService.setToken(response.token);
+        // Navigate to the home page
+        this.router.navigate(['/']);
       },
       error: (err) => {
-        alert(err.message); // Show specific error messages to the user
+        // Show an alert if there's an error (e.g., invalid credentials)
+        alert(err.message);
       }
     });
   }
 
+  // Handles user logout
   logout() {
-    this.authService.logout(); // Call logout method from AuthService
+    // Call the AuthService logout method to clear the token
+    this.authService.logout();
   }
 }

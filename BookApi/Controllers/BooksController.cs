@@ -4,12 +4,12 @@ using System.Collections.Generic;
 
 namespace BookApi.Controllers
 {
-    [Authorize]  // Autentisering krävs för alla actions
+    [Authorize]  // Requires authentication for all actions in this controller
     [Route("api/[controller]")]
     [ApiController]
     public class BooksController : ControllerBase
     {
-        // Statisk lista som simulerar en databas i minnet
+        // Static list simulating an in-memory database
         private static List<BookModel> books = new List<BookModel>
         {
             new BookModel { Id = 1, Title = "The Great Gatsby", Author = "F. Scott Fitzgerald" },
@@ -18,81 +18,90 @@ namespace BookApi.Controllers
         };
 
         // GET: api/Books
+        // Retrieves all books
         [HttpGet]
         public ActionResult<IEnumerable<BookModel>> GetBooks()
         {
-            return Ok(books);
+            return Ok(books); // Returns the full list of books
         }
 
-        // GET: api/Books/5
+        // GET: api/Books/{id}
+        // Retrieves a specific book by its ID
         [HttpGet("{id}")]
         public ActionResult<BookModel> GetBook(int id)
         {
-            var book = books.Find(b => b.Id == id);
+            var book = books.Find(b => b.Id == id); // Find the book by ID
             if (book == null)
             {
-                return NotFound("Book not found");
+                return NotFound("Book not found"); // Returns 404 if the book doesn't exist
             }
 
-            return Ok(book);
+            return Ok(book); // Returns the found book
         }
 
         // POST: api/Books
+        // Adds a new book to the list
         [HttpPost]
         public IActionResult AddBook([FromBody] BookModel book)
         {
+            // Checks if Title and Author are provided
             if (string.IsNullOrWhiteSpace(book.Title) || string.IsNullOrWhiteSpace(book.Author))
             {
                 return BadRequest("Title and Author are required");
             }
 
-            book.Id = books.Count > 0 ? books[^1].Id + 1 : 1; // Genererar ett nytt ID
-            books.Add(book);
+            // Generates a new ID for the book (incrementing from the last book's ID)
+            book.Id = books.Count > 0 ? books[^1].Id + 1 : 1;
+            books.Add(book); // Adds the book to the list
 
-            return Ok();
+            return Ok(); // Returns a successful response
         }
 
-        // PUT: api/Books/5
+        // PUT: api/Books/{id}
+        // Edits an existing book
         [HttpPut("{id}")]
         public IActionResult EditBook(int id, [FromBody] BookModel book)
         {
-            var existingBook = books.Find(b => b.Id == id);
+            var existingBook = books.Find(b => b.Id == id); // Find the book by ID
             if (existingBook == null)
             {
-                return NotFound("Book not found");
+                return NotFound("Book not found"); // Returns 404 if the book doesn't exist
             }
 
+            // Checks if Title and Author are provided
             if (string.IsNullOrWhiteSpace(book.Title) || string.IsNullOrWhiteSpace(book.Author))
             {
                 return BadRequest("Title and Author are required");
             }
 
+            // Update the book's details
             existingBook.Title = book.Title;
             existingBook.Author = book.Author;
 
-            return Ok();
+            return Ok(); // Returns a successful response
         }
 
-        // DELETE: api/Books/5
+        // DELETE: api/Books/{id}
+        // Deletes a book by ID
         [HttpDelete("{id}")]
         public IActionResult DeleteBook(int id)
         {
-            var book = books.Find(b => b.Id == id);
+            var book = books.Find(b => b.Id == id); // Find the book by ID
             if (book == null)
             {
-                return NotFound("Book not found");
+                return NotFound("Book not found"); // Returns 404 if the book doesn't exist
             }
 
-            books.Remove(book);
-            return Ok();
+            books.Remove(book); // Remove the book from the list
+            return Ok(); // Returns a successful response
         }
     }
 
-    // Modell för en bok
+    // Model representing a book
     public class BookModel
     {
-        public int Id { get; set; }
-        public string Title { get; set; }
-        public string Author { get; set; }
+        public int Id { get; set; } // Unique identifier for the book
+        public string Title { get; set; } // Title of the book
+        public string Author { get; set; } // Author of the book
     }
 }

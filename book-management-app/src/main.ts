@@ -10,24 +10,23 @@ import { AuthGuard } from './app/guards/auth.guard';
 import { AuthService } from './app/services/auth.service';
 import { authInterceptorFn } from './app/interceptors/auth.interceptor';
 
-// Definiera dina rutter här
+// Define the routes for the application
 const routes = [
-  { path: '', component: BookListComponent, canActivate: [AuthGuard] },
-  { path: 'add-edit-book', component: AddEditBookComponent, canActivate: [AuthGuard] },
-  { path: 'add-edit-book/:id', component: AddEditBookComponent, canActivate: [AuthGuard] },
-  { path: 'my-quotes', component: MyQuotesComponent, canActivate: [AuthGuard] },
-  { path: 'login', component: LoginComponent }
-
+  { path: '', component: BookListComponent, canActivate: [AuthGuard] },  // Book list, guarded by AuthGuard
+  { path: 'add-edit-book', component: AddEditBookComponent, canActivate: [AuthGuard] },  // Add or edit a book, guarded by AuthGuard
+  { path: 'add-edit-book/:id', component: AddEditBookComponent, canActivate: [AuthGuard] },  // Edit a specific book by ID, guarded by AuthGuard
+  { path: 'my-quotes', component: MyQuotesComponent, canActivate: [AuthGuard] },  // Quotes list, guarded by AuthGuard
+  { path: 'login', component: LoginComponent }  // Login page, no guard needed
 ];
 
-// Bootstrap applikationen med nödvändiga providers
+// Bootstrap the application with the required providers
 bootstrapApplication(AppComponent, {
   providers: [
-    provideRouter(routes), // Ange rutterna
+    provideRouter(routes),  // Provide the routes
     provideHttpClient(
-      withInterceptors([authInterceptorFn]) // Använd den nya interceptor-funktionen
+      withInterceptors([authInterceptorFn])  // Use the interceptor to handle authentication
     ),
-    AuthService, // Lägg till AuthService
-    AuthGuard    // Lägg till AuthGuard
+    AuthService,  // Provide the AuthService for authentication handling
+    AuthGuard     // Provide the AuthGuard for route protection
   ]
-}).catch(err => console.error(err));
+}).catch(err => console.error(err));  // Catch and log errors during application bootstrap
