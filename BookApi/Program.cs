@@ -54,10 +54,10 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowSpecificOrigin", builder =>
     {
-        // Replace with your actual frontend URL from Render
-        builder.WithOrigins("https://bookmanager-3.onrender.com")
+        builder.WithOrigins("https://bookmanager-3.onrender.com", "https://bookmanager-3.onrender.com/browser/")
                .AllowAnyMethod()
-               .AllowAnyHeader();
+               .AllowAnyHeader()
+               .AllowCredentials();  // Nödvändig om du skickar autentiseringstoken
     });
 });
 
