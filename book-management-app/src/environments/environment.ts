@@ -1,6 +1,6 @@
 // environment.ts
 export const environment = {
     production: false,
-    apiUrl: 'https://localhost:5004' // Ensure this matches your backend API URL
+    apiUrl: 'https://bookmanager-lh64.onrender.com/api' // Ensure this matches your backend API URL
   };
   
