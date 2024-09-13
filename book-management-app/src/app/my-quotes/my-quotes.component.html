@@ -1,26 +1,40 @@
 <div class="container">
-  <h2>My Quotes</h2>
-
-  <!-- Display error messages -->
-  <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
-
-  <!-- Form for adding/editing quotes -->
-  <form (ngSubmit)="addQuote()">
-    <div class="form-group">
-      <input [(ngModel)]="newQuote" name="quote" class="form-control" placeholder="Enter your quote" />
+  <h2 class="my-4">My Quotes</h2>
+  
+  <!-- Formulär för att lägga till/redigera citat -->
+  <form (ngSubmit)="addQuote()" class="mb-4">
+    <div class="input-group">
+      <input type="text" [(ngModel)]="newQuote" name="newQuote" class="form-control" placeholder="Add or edit a quote" required />
+      <button class="btn btn-primary" type="submit" [disabled]="!newQuote.trim()">
+        <i class="fa" [ngClass]="editingIndex !== null ? 'fa-edit' : 'fa-plus'"></i>
+        {{ editingIndex !== null ? 'Update Quote' : 'Add Quote' }}
+      </button>
+      <button *ngIf="editingIndex !== null" class="btn btn-secondary ms-2" type="button" (click)="cancelEdit()">Cancel</button>
     </div>
-    <button type="submit" class="btn btn-primary" [disabled]="!newQuote.trim()">Save Quote</button>
-    <button type="button" class="btn btn-secondary" (click)="cancelEdit()" *ngIf="editingIndex !== null">Cancel Edit</button>
   </form>
 
-  <!-- Display list of quotes -->
-  <ul class="list-group mt-4">
-    <li *ngFor="let quote of quotes; let i = index" class="list-group-item d-flex justify-content-between align-items-center">
-      {{ quote }}
-      <div>
-        <button class="btn btn-sm btn-warning" (click)="editQuote(i)">Edit</button>
-        <button class="btn btn-sm btn-danger" (click)="deleteQuote(i)">Delete</button>
-      </div>
-    </li>
-  </ul>
+  <!-- Tabell för citat -->
+  <div class="table-responsive">
+    <table class="table table-hover table-bordered bg-white">
+      <thead class="table-secondary">
+        <tr>
+          <th style="width: 70%;">Quote</th> <!-- Anpassa bredden för att ge utrymme till knappar -->
+          <th style="width: 30%;">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let quote of quotes; let i = index">
+          <td>{{ quote }}</td>
+          <td class="d-flex flex-column flex-md-row justify-content-center align-items-stretch"> 
+            <button class="btn btn-warning btn-sm w-100 mb-2 mb-md-0 me-md-2" (click)="editQuote(i)">
+              <i class="fa fa-edit"></i> Edit
+            </button>
+            <button class="btn btn-danger btn-sm w-100" (click)="deleteQuote(i)">
+              <i class="fa fa-trash"></i> Delete
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </div>
