@@ -1,6 +1,8 @@
 {
-    "routes": {
-      "/**": "index.html"
-    }
-  }
-  
+  "root": "dist",  
+  "routes": {
+    "/**": "index.html"
+  },
+  "cleanUrls": true,
+  "trailingSlash": true 
+}
