@@ -1,12 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';  
+import { FormsModule } from '@angular/forms';  // Required for [(ngModel)]
+import { HttpClient } from '@angular/common/http';  // Import HttpClient for API requests
 import { QuoteService } from '../services/quote.service';
 
 @Component({
   selector: 'app-my-quotes',
   standalone: true,  // Standalone component importing necessary modules
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule],  // Include FormsModule
   templateUrl: './my-quotes.component.html',
   styleUrls: ['./my-quotes.component.css']
 })
@@ -14,20 +15,23 @@ export class MyQuotesComponent implements OnInit {
   quotes: string[] = [];  // Array to store the list of quotes
   newQuote: string = '';  // Model for the new or edited quote
   editingIndex: number | null = null;  // Tracks which quote is being edited, if any
+  errorMessage: string = '';  // To handle and display errors
 
-  constructor(private quoteService: QuoteService) {}
+  constructor(private http: HttpClient, private quoteService: QuoteService) {}
 
   // Lifecycle hook that runs once the component has been initialized
   ngOnInit(): void {
-    this.loadQuotes();  // Fetch the quotes when the component initializes
-  }
-
-  // Fetch quotes from the backend using QuoteService
-  loadQuotes(): void {
-    this.quoteService.getQuotes().subscribe({
-      next: (data) => (this.quotes = data),  // Populate the quotes array with fetched data
-      error: (err: any) => console.error('Failed to fetch quotes', err)  // Log any errors
-    });
+    // Fetch quotes from the backend API
+    this.http.get<string[]>('https://bookmanager-3.onrender.com/api/quotes')
+      .subscribe({
+        next: (data) => {
+          this.quotes = data;  // Populate the quotes array with fetched data
+        },
+        error: (err: any) => {
+          this.errorMessage = 'Failed to fetch quotes';
+          console.error('Error fetching quotes', err);
+        }
+      });
   }
 
   // Add a new quote or update an existing one
@@ -41,7 +45,10 @@ export class MyQuotesComponent implements OnInit {
             this.newQuote = '';  // Clear the input field
             this.editingIndex = null;  // Reset edit mode
           },
-          error: (err: any) => console.error('Failed to edit quote', err)  // Log any errors
+          error: (err: any) => {
+            this.errorMessage = 'Failed to edit quote';
+            console.error('Error editing quote', err);
+          }
         });
       } else {
         // If not in edit mode, add a new quote
@@ -50,7 +57,10 @@ export class MyQuotesComponent implements OnInit {
             this.quotes.push(this.newQuote);  // Add the new quote to the local array
             this.newQuote = '';  // Clear the input field
           },
-          error: (err: any) => console.error('Failed to add quote', err)  // Log any errors
+          error: (err: any) => {
+            this.errorMessage = 'Failed to add quote';
+            console.error('Error adding quote', err);
+          }
         });
       }
     }
@@ -65,8 +75,13 @@ export class MyQuotesComponent implements OnInit {
   // Delete a quote from the backend and local array
   deleteQuote(index: number): void {
     this.quoteService.deleteQuote(index).subscribe({
-      next: () => this.quotes.splice(index, 1),  // Remove the quote from the local array
-      error: (err: any) => console.error('Failed to delete quote', err)  // Log any errors
+      next: () => {
+        this.quotes.splice(index, 1);  // Remove the quote from the local array
+      },
+      error: (err: any) => {
+        this.errorMessage = 'Failed to delete quote';
+        console.error('Error deleting quote', err);
+      }
     });
   }
 
