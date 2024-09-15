@@ -1,4 +1,10 @@
 routes:
+  # Serve static files
+  - type: static
+    src: dist/book-management-app
+    dest: /
+
+  # SPA routing
   - type: rewrite
     source: /*
     destination: /index.html
