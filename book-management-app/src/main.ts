@@ -11,13 +11,13 @@ import { AuthService } from './app/services/auth.service';
 import { authInterceptorFn } from './app/interceptors/auth.interceptor';
 
 // Define the routes for the application and explicitly type them as 'Routes'
-const routes: Routes = [
-  { path: '', redirectTo: '/browser', pathMatch: 'full' },  // Redirect the root path to '/browser'
-  { path: 'browser', component: BookListComponent, canActivate: [AuthGuard] },  // Book list route with AuthGuard
-  { path: 'add-edit-book', component: AddEditBookComponent, canActivate: [AuthGuard] },  // Add or edit a book, guarded by AuthGuard
-  { path: 'add-edit-book/:id', component: AddEditBookComponent, canActivate: [AuthGuard] },  // Edit a specific book by ID, guarded by AuthGuard
-  { path: 'my-quotes', component: MyQuotesComponent, canActivate: [AuthGuard] },  // Quotes list, guarded by AuthGuard
-  { path: 'login', component: LoginComponent }  // Login page, no guard needed
+const routes = [
+  { path: '', component: BookListComponent, canActivate: [AuthGuard] },
+  { path: 'add-edit-book', component: AddEditBookComponent, canActivate: [AuthGuard] },
+  { path: 'add-edit-book/:id', component: AddEditBookComponent, canActivate: [AuthGuard] },
+  { path: 'my-quotes', component: MyQuotesComponent, canActivate: [AuthGuard] },
+  { path: 'login', component: LoginComponent },
+  { path: '**', redirectTo: '' }  // This is the wildcard route
 ];
 
 // Bootstrap the application with the required providers
