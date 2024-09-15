@@ -18,3 +18,8 @@ services:
       - type: rewrite
         source: /*
         destination: /index.html
+    # Add this section to handle MIME types for other common static files
+    mimeTypes:
+      ttf: font/ttf
+      woff: font/woff
+      woff2: font/woff2
