@@ -3,15 +3,15 @@ services:
     name: book-management-app
     env: static
     buildCommand: npm install && npm run build
-    staticPublishPath: ./dist/book-management-app
+    staticPublishPath: ./dist/book-management-app/browser
     headers:
       - path: /*
         name: Cache-Control
         value: no-cache
-      - path: /*
-        name: Content-Type
-        value: text/html; charset=utf-8
     routes:
       - type: rewrite
         source: /*
         destination: /index.html
+    mimeTypes:
+      js: application/javascript
+      css: text/css
