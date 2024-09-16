@@ -2,16 +2,16 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using BookApi.Data;  // Ensure the correct namespace is used
+using BookApi.Data;  // Ensure this namespace is correct
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add necessary services to the container
-builder.Services.AddControllers();  // Register controllers
-builder.Services.AddEndpointsApiExplorer();  // Enable minimal API support
-builder.Services.AddSwaggerGen();  // Enable Swagger for API documentation
+// Add services to the container.
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
-// Register DbContext for SQL Server with connection string from configuration
+// Register BookContext with DI
 builder.Services.AddDbContext<BookContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
@@ -26,68 +26,69 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     {
         options.TokenValidationParameters = new TokenValidationParameters
         {
-            ValidateIssuer = true,  // Ensure token issuer is valid
-            ValidateAudience = true,  // Ensure token audience is valid
-            ValidateLifetime = true,  // Ensure token is still valid
-            ValidateIssuerSigningKey = true,  // Ensure signing key is valid
-            ValidIssuer = jwtIssuer,  // Set issuer from configuration
-            ValidAudience = jwtAudience,  // Set audience from configuration
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey)),  // Set signing key from configuration
-            ClockSkew = TimeSpan.Zero  // No additional time allowance for token expiration
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = jwtIssuer,
+            ValidAudience = jwtAudience,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey)),
+            ClockSkew = TimeSpan.Zero // Removes the default 5 minutes of clock skew
         };
-
-        // Add a custom event to handle token expiration
         options.Events = new JwtBearerEvents
         {
             OnAuthenticationFailed = context =>
             {
-                if (context.Exception is SecurityTokenExpiredException)
+                if (context.Exception.GetType() == typeof(SecurityTokenExpiredException))
                 {
-                    context.Response.Headers.Add("Token-Expired", "true");  // Add a header if the token is expired
+                    context.Response.Headers.Add("Token-Expired", "true");
                 }
                 return Task.CompletedTask;
             }
         };
     });
 
-// Configure CORS to allow requests from the specified frontend domain
+// Configure CORS to allow your frontend domain
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowSpecificOrigin", builder =>
     {
-        builder.WithOrigins("https://bookmanager-3.onrender.com")  // Set the allowed origin (frontend URL)
-               .AllowAnyMethod()  // Allow all HTTP methods (GET, POST, etc.)
-               .AllowAnyHeader()  // Allow all headers
-               .AllowCredentials();  // Allow credentials (cookies, tokens, etc.)
+        builder.WithOrigins("https://bookmanager-3.onrender.com", "http://localhost:4200")
+               .AllowAnyMethod()
+               .AllowAnyHeader()
+               .AllowCredentials();
     });
 });
 
-// Set dynamic port based on the environment (for deployment platforms like Render)
-var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";  // Default to 8080 if no environment variable is set
-builder.WebHost.UseUrls($"http://*:{port}");  // Set the URL and port for the app to listen on
+// Set Render's dynamic port, use port 8080 as default if not provided
+var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
+builder.WebHost.UseUrls($"http://*:{port}");
 
 var app = builder.Build();
 
-// Enable Swagger in development and production environments
+// Enable Swagger for development and production environments
 if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
 {
     app.UseSwagger();
     app.UseSwaggerUI(c =>
     {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
-        c.RoutePrefix = string.Empty;  // Serve Swagger UI at the app's root
+        c.RoutePrefix = string.Empty; // Serve Swagger at the app's root
     });
 }
 
-// Apply CORS policy
+// Use CORS policy to allow only your frontend domain
 app.UseCors("AllowSpecificOrigin");
 
-// Add authentication and authorization middleware
+app.UseDefaultFiles();
+app.UseStaticFiles();
+
 app.UseAuthentication();
 app.UseAuthorization();
 
-// Map controller routes
 app.MapControllers();
 
-// Start the application
+// Add this line to handle SPA routing
+app.MapFallbackToFile("index.html");
+
 app.Run();
