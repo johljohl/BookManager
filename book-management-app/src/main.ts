@@ -16,8 +16,7 @@ const routes = [
   { path: 'add-edit-book', component: AddEditBookComponent, canActivate: [AuthGuard] },
   { path: 'add-edit-book/:id', component: AddEditBookComponent, canActivate: [AuthGuard] },
   { path: 'my-quotes', component: MyQuotesComponent, canActivate: [AuthGuard] },
-  { path: 'login', component: LoginComponent },
-  { path: '**', redirectTo: '/browser/' }
+  { path: 'login', component: LoginComponent }
 
 ];
 
