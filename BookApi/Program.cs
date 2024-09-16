@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using BookApi.Data;  // Ensure this namespace is correct
-using Microsoft.AspNetCore.StaticFiles;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,15 +14,6 @@ builder.Services.AddSwaggerGen();
 // Register BookContext with DI
 builder.Services.AddDbContext<BookContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-
-    var app = builder.Build();
-
-    var provider = new FileExtensionContentTypeProvider();
-provider.Mappings[".js"] = "application/javascript";
-app.UseStaticFiles(new StaticFileOptions
-{
-    ContentTypeProvider = provider
-});
 
 // Get JWT settings from configuration
 var jwtKey = builder.Configuration["Jwt:Key"] ?? throw new InvalidOperationException("JWT Key not configured.");
@@ -86,8 +76,6 @@ if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
         c.RoutePrefix = string.Empty; // Serve Swagger at the app's root
     });
 }
-
-
 
 // Use CORS policy to allow only your frontend domain
 app.UseCors("AllowSpecificOrigin");
