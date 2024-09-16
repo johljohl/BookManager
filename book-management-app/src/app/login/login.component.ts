@@ -7,37 +7,29 @@ import { AuthService } from '../services/auth.service'; // Import AuthService
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, FormsModule],  // Ensure necessary modules are imported
-  templateUrl: './login.component.html',  // Template for login form
-  styleUrls: ['./login.component.css']  // Styles for the login component
+  imports: [CommonModule, FormsModule], // Ensure imports are correctly referenced
+  templateUrl: './login.component.html',
+  styleUrls: ['./login.component.css']
 })
 export class LoginComponent {
-  // Object to bind user input (username and password)
-  user = { username: '', password: '' };
+  user = { username: '', password: '' }; // User object for form binding
 
-  // Inject AuthService for authentication and Router for navigation
-  constructor(public authService: AuthService, private router: Router) {}
+  constructor(public authService: AuthService, private router: Router) {} // authService should be public to access in template
 
-  // Handles the form submission for login
   onSubmit() {
-    // Call the AuthService login method to authenticate the user
+    // Use AuthService to authenticate the user
     this.authService.login(this.user.username, this.user.password).subscribe({
       next: (response) => {
-        // If successful, store the JWT token
-        this.authService.setToken(response.token);
-        // Navigate to the home page
-        this.router.navigate(['/']);
+        this.authService.setToken(response.token); // Store JWT token
+        this.router.navigate(['/']); // Navigate to the home page
       },
       error: (err) => {
-        // Show an alert if there's an error (e.g., invalid credentials)
-        alert(err.message);
+        alert(err.message); // Show specific error messages to the user
       }
     });
   }
 
-  // Handles user logout
   logout() {
-    // Call the AuthService logout method to clear the token
-    this.authService.logout();
+    this.authService.logout(); // Call logout method from AuthService
   }
 }

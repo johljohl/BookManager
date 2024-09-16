@@ -5,45 +5,45 @@ import { environment } from '../../environments/environment';
 import { AuthService } from './auth.service';
 
 @Injectable({
-  providedIn: 'root'  // Makes this service available throughout the application
+  providedIn: 'root'
 })
 export class BookService {
-  // Construct the base URL for book-related API requests
-  private apiUrl = `${environment.apiUrl}/Books`;  // Note: "/api" has been removed to avoid duplication
+  // Uppdaterad apiUrl för att undvika "/api/api"-problemet
+  private apiUrl = `${environment.apiUrl}/Books`; // Notera att "/api" har tagits bort
 
   constructor(private http: HttpClient, private authService: AuthService) {}
 
-  // Helper method to get headers with JWT token
+  // Metod för att få JWT-headern
   private getHeaders(): HttpHeaders {
-    const token = this.authService.getToken();  // Get the token from AuthService
+    const token = this.authService.getToken();
     return new HttpHeaders({
-      'Content-Type': 'application/json',  // Set content type
-      'Authorization': `Bearer ${token}`  // Attach the JWT token to the Authorization header
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`  // Lägg till JWT-token i headern
     });
   }
 
-  // Fetch all books from the backend
+  // Hämta alla böcker
   getBooks(): Observable<any[]> {
-    return this.http.get<any[]>(this.apiUrl, { headers: this.getHeaders() });  // GET request with headers
+    return this.http.get<any[]>(this.apiUrl, { headers: this.getHeaders() });
   }
 
-  // Fetch a single book by its ID
+  // Hämta en specifik bok baserat på ID
   getBook(id: number): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/${id}`, { headers: this.getHeaders() });  // GET request for specific book
+    return this.http.get<any>(`${this.apiUrl}/${id}`, { headers: this.getHeaders() });
   }
 
-  // Add a new book to the backend
+  // Lägg till en ny bok
   addBook(book: any): Observable<any> {
-    return this.http.post<any>(this.apiUrl, book, { headers: this.getHeaders() });  // POST request with book data
+    return this.http.post<any>(this.apiUrl, book, { headers: this.getHeaders() });
   }
 
-  // Update an existing book by its ID
+  // Uppdatera en bok baserat på ID
   updateBook(id: number, book: any): Observable<any> {
-    return this.http.put<any>(`${this.apiUrl}/${id}`, book, { headers: this.getHeaders() });  // PUT request to update book
+    return this.http.put<any>(`${this.apiUrl}/${id}`, book, { headers: this.getHeaders() });
   }
 
-  // Delete a book by its ID
+  // Ta bort en bok baserat på ID
   deleteBook(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`, { headers: this.getHeaders() });  // DELETE request to remove book
+    return this.http.delete<void>(`${this.apiUrl}/${id}`, { headers: this.getHeaders() });
   }
 }

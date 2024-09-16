@@ -1,12 +1,12 @@
 import { Component, Renderer2 } from '@angular/core';
-import { Router, RouterModule, NavigationEnd } from '@angular/router'; // Add RouterModule and Router
+import { Router, RouterModule, NavigationEnd } from '@angular/router'; // Lägg till RouterModule och Router
 import { CommonModule } from '@angular/common';
 import { AuthService } from './services/auth.service'; // Import AuthService
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterModule, CommonModule], // Include RouterModule
+  imports: [RouterModule, CommonModule], // Lägg till RouterModule här
   template: `
     <nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top">
       <div class="container-fluid">
@@ -29,14 +29,14 @@ import { AuthService } from './services/auth.service'; // Import AuthService
               <a class="nav-link" routerLink="/login" (click)="closeNavbar()">Login</a>
             </li>
             <li class="nav-item" *ngIf="authService.isAuthenticated()">
-              <a class="nav-link" (click)="logout()">Logout</a> <!-- Logout link -->
+            <a class="nav-link" routerLink="/login" (click)="closeNavbar()">Logout</a>
             </li>
           </ul>
           <button class="btn btn-outline-secondary" (click)="toggleTheme()">Toggle Theme</button>
         </div>
       </div>
     </nav>
-    <router-outlet></router-outlet> <!-- Displays routed views -->
+    <router-outlet></router-outlet>
   `,
   styles: [`
     .navbar {
@@ -45,48 +45,47 @@ import { AuthService } from './services/auth.service'; // Import AuthService
   `]
 })
 export class AppComponent {
-  isDarkTheme = false; // Start with light theme
+  isDarkTheme = false; // Startar med ljus tema
 
   constructor(public authService: AuthService, private renderer: Renderer2, private router: Router) {
-    // Initialize theme based on local storage or default setting
+    // Initialt tema baserat på användarens systeminställningar eller tidigare val
     this.isDarkTheme = localStorage.getItem('theme') === 'dark';
     this.updateTheme();
 
-    // Listen for route changes to automatically close the navbar after navigation
+    // Lyssna på navigationshändelser
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
-        this.closeNavbar();
+        this.closeNavbar(); // Stäng navbaren efter navigation
       }
     });
   }
 
-  // Toggle between dark and light theme
   toggleTheme() {
     this.isDarkTheme = !this.isDarkTheme;
     this.updateTheme();
-    localStorage.setItem('theme', this.isDarkTheme ? 'dark' : 'light'); // Save theme to local storage
+    localStorage.setItem('theme', this.isDarkTheme ? 'dark' : 'light'); // Spara tema till lokal lagring
   }
 
-  // Apply the current theme to the body element
   updateTheme() {
     const theme = this.isDarkTheme ? 'dark-theme' : 'light-theme';
-    this.renderer.setAttribute(document.body, 'class', theme); // Set the theme class on the body element
+    this.renderer.setAttribute(document.body, 'class', theme); // Uppdatera body-klassen
   }
 
-  // Handle logout and close the navbar
   logout() {
-    this.authService.logout(); // Call logout method from AuthService
-    this.closeNavbar(); // Close navbar after logout
+    this.authService.logout(); // Anropa logout-metoden från AuthService
+    this.closeNavbar(); // Stäng navbaren efter utloggning
   }
 
-  // Close the navbar after navigation or action
   closeNavbar() {
     const navbar = document.getElementById('navbarNav');
     if (navbar && navbar.classList.contains('show')) {
-      const navbarToggler = document.querySelector('.navbar-toggler') as HTMLElement; // Ensure HTMLElement usage
+      const navbarToggler = document.querySelector('.navbar-toggler') as HTMLElement; // Använd HTMLElement
       if (navbarToggler) {
-        navbarToggler.click(); // Programmatically click the toggler to close the menu
+        navbarToggler.click(); // Klicka programatiskt på togglern för att stänga menyn
       }
     }
   }
 }
+
+
+              

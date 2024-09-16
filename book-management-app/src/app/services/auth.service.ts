@@ -9,96 +9,96 @@ import { environment } from '../../environments/environment';
   providedIn: 'root'
 })
 export class AuthService {
-  // Auth URL, ensuring no double "/api" issue
+  // Uppdaterad authUrl för att undvika "/api/api"-problemet
   private authUrl = `${environment.apiUrl}/Auth`;
   private tokenExpirationTimer: any;
   private currentToken: BehaviorSubject<string | null> = new BehaviorSubject<string | null>(this.getToken());
 
   constructor(private http: HttpClient, private router: Router) {}
 
-  // Login method
+  // Inloggning
   login(username: string, password: string): Observable<any> {
     return this.http.post<any>(`${this.authUrl}/login`, { username, password }).pipe(
       tap(response => {
         if (response && response.token) {
-          this.setToken(response.token);  // Store token
-          this.startTokenTimer();  // Start the token expiration timer
+          this.setToken(response.token); // Sätt token om den finns
+          this.startTokenTimer();
         }
       }),
-      catchError(this.handleError)  // Handle any errors during login
+      catchError(this.handleError)
     );
   }
 
-  // Store the token in local storage
+  // Sätt token i lokal lagring
   setToken(token: string): void {
     localStorage.setItem('authToken', token);
-    this.currentToken.next(token);  // Notify subscribers of token change
+    this.currentToken.next(token);
   }
 
-  // Retrieve the token from local storage
+  // Hämta token från lokal lagring
   getToken(): string | null {
     return localStorage.getItem('authToken');
   }
 
-  // Check if the user is authenticated
+  // Kolla om användaren är autentiserad
   isAuthenticated(): boolean {
     return !!this.getToken();
   }
 
-  // Log the user out
+  // Logga ut användaren
   logout(): void {
-    localStorage.removeItem('authToken');  // Remove token from local storage
-    this.currentToken.next(null);  // Notify subscribers
-    clearTimeout(this.tokenExpirationTimer);  // Clear any token timers
-    this.router.navigate(['/login']);  // Redirect to login page
+    localStorage.removeItem('authToken');
+    this.currentToken.next(null);
+    clearTimeout(this.tokenExpirationTimer);
+    this.router.navigate(['/login']);
   }
 
-  // Start the token expiration timer
+  // Starta token-timer baserat på dess utgångstid
   private startTokenTimer() {
     const token = this.getToken();
     if (token) {
-      const expirationDate = this.getTokenExpirationDate(token);  // Get expiration date from token
+      const expirationDate = this.getTokenExpirationDate(token);
       if (expirationDate) {
         const expiresIn = expirationDate.getTime() - Date.now();
-        this.tokenExpirationTimer = setTimeout(() => this.logout(), expiresIn);  // Log out when token expires
+        this.tokenExpirationTimer = setTimeout(() => this.logout(), expiresIn);
       }
     }
   }
 
-  // Decode token to get its expiration date
+  // Hämta utgångsdatumet för token
   private getTokenExpirationDate(token: string): Date | null {
     try {
-      const decodedToken = JSON.parse(atob(token.split('.')[1]));  // Decode JWT token
+      const decodedToken = JSON.parse(atob(token.split('.')[1]));
       if (decodedToken.exp === undefined) return null;
-      const date = new Date(0);  // Initialize date object
-      date.setUTCSeconds(decodedToken.exp);  // Set expiration time
+      const date = new Date(0);
+      date.setUTCSeconds(decodedToken.exp);
       return date;
     } catch (e) {
-      return null;  // Return null if decoding fails
+      return null; // Hantera om något går fel med avkodning
     }
   }
 
-  // Handle HTTP errors
+  // Hantera fel från HTTP-anrop
   private handleError(error: HttpErrorResponse) {
     console.error('AuthService: HTTP Error', error);
     if (error.status === 401) {
-      return throwError(() => new Error('Invalid username or password'));  // Unauthorized error
+      return throwError(() => new Error('Invalid username or password'));
     } else if (error.headers?.get('Token-Expired')) {
-      return throwError(() => new Error('Session expired. Please login again.'));  // Token expired error
+      return throwError(() => new Error('Session expired. Please login again.'));
     }
-    return throwError(() => new Error('An unknown error occurred. Please try again later.'));  // Generic error
+    return throwError(() => new Error('An unknown error occurred. Please try again later.'));
   }
 
-  // Refresh the token
+  // Förnya token om backend stöder det
   refreshToken(): Observable<any> {
     return this.http.post<any>(`${this.authUrl}/refresh`, {}).pipe(
       tap(response => {
         if (response && response.token) {
-          this.setToken(response.token);  // Update token
-          this.startTokenTimer();  // Restart token expiration timer
+          this.setToken(response.token); // Uppdatera token
+          this.startTokenTimer();
         }
       }),
-      catchError(this.handleError)  // Handle errors during token refresh
+      catchError(this.handleError)
     );
   }
 }
