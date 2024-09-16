@@ -1,33 +1,19 @@
 import { bootstrapApplication } from '@angular/platform-browser';
-import { provideRouter, Routes } from '@angular/router';  // <-- Explicitly import Routes type
+import { provideRouter, withHashLocation } from '@angular/router';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { AppComponent } from './app/app.component';
-import { BookListComponent } from './app/book-list/book-list.component';
-import { AddEditBookComponent } from './app/add-edit-book/add-edit-book.component';
-import { MyQuotesComponent } from './app/my-quotes/my-quotes.component';
-import { LoginComponent } from './app/login/login.component';
-import { AuthGuard } from './app/guards/auth.guard';
 import { AuthService } from './app/services/auth.service';
 import { authInterceptorFn } from './app/interceptors/auth.interceptor';
+import { routes } from './app/app.routes';  // Import routes from app.routes.ts
 
-// Define the routes for the application and explicitly type them as 'Routes'
-const routes = [
-  { path: '', component: BookListComponent, canActivate: [AuthGuard] },
-  { path: 'add-edit-book', component: AddEditBookComponent, canActivate: [AuthGuard] },
-  { path: 'add-edit-book/:id', component: AddEditBookComponent, canActivate: [AuthGuard] },
-  { path: 'my-quotes', component: MyQuotesComponent, canActivate: [AuthGuard] },
-  { path: 'login', component: LoginComponent },
-  { path: '**', redirectTo: '' }  // This is the wildcard route
-];
-
-// Bootstrap the application with the required providers
+// Bootstrap applikationen med nödvändiga providers
 bootstrapApplication(AppComponent, {
   providers: [
-    provideRouter(routes),  // Provide the routes
+    provideRouter(routes, withHashLocation()),  // Use imported routes
     provideHttpClient(
-      withInterceptors([authInterceptorFn])  // Use the interceptor to handle authentication
+      withInterceptors([authInterceptorFn])
     ),
-    AuthService,  // Provide the AuthService for authentication handling
-    AuthGuard     // Provide the AuthGuard for route protection
+    AuthService,
+    // AuthGuard is not needed here if it's used in the route definitions
   ]
-}).catch(err => console.error(err));  // Catch and log errors during application bootstrap
+}).catch(err => console.error(err));
